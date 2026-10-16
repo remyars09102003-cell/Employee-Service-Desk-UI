@@ -1,0 +1,435 @@
+
+<div class="assets-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">INVENTORY MANAGEMENT</span>
+      <h1>Asset &amp; Hardware Management</h1>
+      <p>Manage your company's hardware inventory.</p>
+    </div>
+
+    <button
+      type="button"
+      class="primary-button"
+      (click)="openAddForm()"
+      [disabled]="loading || saving">
+      + Add Asset
+    </button>
+  </header>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="message error-message" role="alert">
+    <span>{{ errorMessage }}</span>
+    <button
+      type="button"
+      (click)="errorMessage = ''"
+      aria-label="Dismiss error">
+      ×
+    </button>
+  </div>
+
+  <!-- Success message -->
+  <div *ngIf="successMessage" class="message success-message" role="status">
+    <span>{{ successMessage }}</span>
+    <button
+      type="button"
+      (click)="successMessage = ''"
+      aria-label="Dismiss message">
+      ×
+    </button>
+  </div>
+
+  <!-- Asset summary -->
+  <section class="summary-grid">
+    <article class="summary-card total-card">
+      <span class="summary-icon">▣</span>
+      <div>
+        <p>Total Assets</p>
+        <strong>{{ totalAssets }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card available-card">
+      <span class="summary-icon">✓</span>
+      <div>
+        <p>Available Assets</p>
+        <strong>{{ availableCount }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card assigned-card">
+      <span class="summary-icon">♙</span>
+      <div>
+        <p>Assigned Assets</p>
+        <strong>{{ assignedCount }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card repair-card">
+      <span class="summary-icon">⚒</span>
+      <div>
+        <p>Under Repair</p>
+        <strong>{{ repairCount }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card retired-card">
+      <span class="summary-icon">▣</span>
+      <div>
+        <p>Retired Assets</p>
+        <strong>{{ retiredCount }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- Add / Edit asset form -->
+  <section class="asset-form-panel" *ngIf="showForm">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">
+          {{ editingId === null ? 'NEW RECORD' : 'UPDATE RECORD' }}
+        </span>
+
+        <h2>
+          {{ editingId === null ? 'Add New Asset' : 'Edit Asset' }}
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        class="icon-button"
+        (click)="cancelForm()"
+        [disabled]="saving"
+        aria-label="Close form">
+        ×
+      </button>
+    </div>
+
+    <form #assetForm="ngForm" (ngSubmit)="saveAsset(assetForm)">
+      <div class="form-grid">
+        <label>
+          Asset Name *
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="form.name"
+            #nameField="ngModel"
+            required
+            maxlength="150"
+            placeholder="e.g. HP Laptop">
+
+          <small
+            class="field-error"
+            *ngIf="nameField.invalid && nameField.touched">
+            Enter an asset name.
+          </small>
+        </label>
+
+        <label>
+          Asset Tag *
+          <input
+            type="text"
+            name="assetTag"
+            [(ngModel)]="form.assetTag"
+            #tagField="ngModel"
+            required
+            maxlength="50"
+            placeholder="e.g. AST-1002">
+
+          <small
+            class="field-error"
+            *ngIf="tagField.invalid && tagField.touched">
+            Enter an asset tag.
+          </small>
+        </label>
+
+        <label>
+          Asset Type *
+          <input
+            type="text"
+            name="assetType"
+            [(ngModel)]="form.assetType"
+            #typeField="ngModel"
+            required
+            maxlength="100"
+            placeholder="e.g. Laptop, Monitor, Printer">
+
+          <small
+            class="field-error"
+            *ngIf="typeField.invalid && typeField.touched">
+            Enter an asset type.
+          </small>
+        </label>
+
+        <label>
+          Serial Number
+          <input
+            type="text"
+            name="serialNumber"
+            [(ngModel)]="form.serialNumber"
+            maxlength="100"
+            placeholder="Enter serial number">
+        </label>
+
+        <label>
+          Purchase Date
+          <input
+            type="date"
+            name="purchaseDate"
+            [(ngModel)]="form.purchaseDate">
+        </label>
+
+        <label>
+          Status *
+          <select
+            name="status"
+            [(ngModel)]="form.status"
+            #statusField="ngModel"
+            required>
+            <option value="Available">Available</option>
+            <option value="InUse">In Use</option>
+            <option value="Repair">Under Repair</option>
+            <option value="Retired">Retired</option>
+          </select>
+
+          <small
+            class="field-error"
+            *ngIf="statusField.invalid && statusField.touched">
+            Select an asset status.
+          </small>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="cancelForm()"
+          [disabled]="saving">
+          Cancel
+        </button>
+
+        <!-- Button remains enabled unless a save is in progress -->
+        <button
+          type="submit"
+          class="primary-button"
+          [disabled]="saving">
+          {{
+            saving
+              ? 'Saving...'
+              : editingId === null
+                ? 'Create Asset'
+                : 'Save Changes'
+          }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Hardware inventory -->
+  <section class="inventory-panel">
+    <div class="section-heading inventory-heading">
+      <div>
+        <span class="eyebrow">ASSET REGISTER</span>
+        <h2>Hardware Inventory</h2>
+        <p>View and manage registered hardware assets.</p>
+      </div>
+
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="loadAssets()"
+        [disabled]="loading || saving">
+        ↻ Refresh
+      </button>
+    </div>
+
+    <!-- Search and status filter -->
+    <div class="inventory-toolbar">
+      <label class="search-field">
+        <span>⌕</span>
+
+        <input
+          type="search"
+          name="searchTerm"
+          [(ngModel)]="searchTerm"
+          placeholder="Search by name, tag, type, serial number..."
+          aria-label="Search assets">
+
+        <button
+          *ngIf="searchTerm"
+          type="button"
+          (click)="clearFilters()"
+          aria-label="Clear search">
+          ×
+        </button>
+      </label>
+
+      <label class="status-filter">
+        <span>Status</span>
+
+        <select [(ngModel)]="statusFilter" name="statusFilter">
+          <option value="All">All statuses</option>
+          <option value="Available">Available</option>
+          <option value="InUse">In Use</option>
+          <option value="Assigned">Assigned</option>
+          <option value="Repair">Under Repair</option>
+          <option value="Retired">Retired</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-state">
+      <span class="loader"></span>
+      <p>Loading hardware inventory...</p>
+    </div>
+
+    <!-- Inventory table -->
+    <div class="table-wrapper" *ngIf="!loading">
+      <table>
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Asset Tag</th>
+            <th>Type</th>
+            <th>Serial Number</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Purchase Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let asset of filteredAssets; trackBy: trackByAssetId">
+
+            <td>
+              <div class="asset-name-cell">
+                <span class="table-asset-icon">▣</span>
+                <strong>{{ asset.name }}</strong>
+              </div>
+            </td>
+
+            <td>
+              <span class="asset-tag">{{ asset.assetTag }}</span>
+            </td>
+
+            <td>{{ asset.assetType }}</td>
+
+            <td>{{ asset.serialNumber || '—' }}</td>
+
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-available': asset.status.toLowerCase() === 'available',
+                  'status-assigned': isAssigned(asset),
+                  'status-repair': asset.status.toLowerCase() === 'repair',
+                  'status-retired': asset.status.toLowerCase() === 'retired'
+                }">
+                {{ asset.status }}
+              </span>
+            </td>
+
+            <td>{{ asset.assignedTo || '—' }}</td>
+
+            <td>
+              {{
+                asset.purchaseDate
+                  ? (asset.purchaseDate | date:'mediumDate')
+                  : '—'
+              }}
+            </td>
+
+            <td>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="action-button edit-button"
+                  (click)="editAsset(asset)"
+                  [disabled]="saving">
+                  Edit
+                </button>
+
+                <button
+                  *ngIf="
+                    !isAssigned(asset) &&
+                    asset.status.toLowerCase() === 'available'
+                  "
+                  type="button"
+                  class="action-button assign-button"
+                  (click)="assignAsset(asset)"
+                  [disabled]="saving">
+                  Assign
+                </button>
+
+                <button
+                  *ngIf="isAssigned(asset)"
+                  type="button"
+                  class="action-button return-button"
+                  (click)="returnAsset(asset)"
+                  [disabled]="saving">
+                  Return
+                </button>
+
+                <button
+                  type="button"
+                  class="action-button delete-button"
+                  (click)="deleteAsset(asset)"
+                  [disabled]="saving">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredAssets.length === 0">
+            <td colspan="8" class="empty-state">
+              <span>▦</span>
+              <strong>No assets found</strong>
+
+              <p>
+                {{
+                  searchTerm || statusFilter !== 'All'
+                    ? 'Try changing your search or status filter.'
+                    : 'Add your first hardware asset to get started.'
+                }}
+              </p>
+
+              <button
+                *ngIf="!searchTerm && statusFilter === 'All'"
+                type="button"
+                class="primary-button"
+                (click)="openAddForm()">
+                + Add Asset
+              </button>
+
+              <button
+                *ngIf="searchTerm || statusFilter !== 'All'"
+                type="button"
+                class="secondary-button"
+                (click)="clearFilters()">
+                Clear Filters
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Inventory footer -->
+    <footer class="table-footer" *ngIf="!loading">
+      <span>
+        Showing
+        <strong>{{ filteredAssets.length }}</strong>
+        of
+        <strong>{{ totalAssets }}</strong>
+        assets
+      </span>
+
+      <span>Employee Service Desk · Asset Management</span>
+    </footer>
+  </section>
+</div>
+

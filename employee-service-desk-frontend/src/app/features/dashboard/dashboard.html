@@ -1,0 +1,68 @@
+<div class="dashboard">
+  <header class="welcome-header">
+    <div class="welcome-copy">
+      <span class="greeting">Good Morning,</span>
+      <h1>Welcome to <span>Employee Service Desk</span></h1>
+      <p>Monitor hardware assets, track warranty status, and review employee feedback from one place.</p>
+    </div>
+    <div class="welcome-right">
+      <div class="date-block"><span class="calendar-icon">▦</span><div><strong>{{ (lastUpdated || today) | date:'EEE, dd MMM yyyy' }}</strong><small>{{ (lastUpdated || today) | date:'hh:mm a' }}</small></div></div>
+      <div class="profile"><span class="avatar">AJ</span><strong>Alvin Jose</strong><span>⌄</span></div>
+    </div>
+    <div class="slogan">Better Tools<br>Happier Teams</div>
+    <div class="desk-decoration"><span class="plant">✿</span><span class="laptop-shape"></span></div>
+  </header>
+
+  <div class="dashboard-toolbar">
+    <nav class="view-tabs" aria-label="Dashboard views">
+      <button type="button" [class.active]="activeView === 'all'" [attr.aria-pressed]="activeView === 'all'" (click)="setView('all')"><span>▦</span> Overview</button>
+      <button type="button" [class.active]="activeView === 'assets'" [attr.aria-pressed]="activeView === 'assets'" (click)="setView('assets')"><span>▣</span> Assets</button>
+      <button type="button" [class.active]="activeView === 'feedback'" [attr.aria-pressed]="activeView === 'feedback'" (click)="setView('feedback')"><span>▤</span> Feedback</button>
+    </nav>
+    <div class="toolbar-actions">
+      <label class="search-box"><span>⌕</span><input type="search" [(ngModel)]="searchTerm" placeholder="Search dashboard..." aria-label="Search dashboard"><button *ngIf="searchTerm" type="button" (click)="clearFilters()" aria-label="Clear search">×</button></label>
+      <button type="button" class="refresh-button" (click)="loadDashboard()" [disabled]="loading"><span [class.spinning]="loading">⟳</span>{{ loading ? 'Refreshing...' : 'Refresh' }}</button>
+      <button type="button" class="export-button" (click)="exportCsv()">↓ Export CSV</button>
+    </div>
+  </div>
+
+  <div class="status-strip"><span class="live-dot"></span>{{ loading ? 'Updating dashboard' : 'Dashboard overview' }}<span class="updated-label" *ngIf="lastUpdated">Updated {{ lastUpdated | date:'shortTime' }}</span></div>
+
+  <div class="loading-panel" *ngIf="loading"><span class="loader"></span><div><strong>Preparing your dashboard</strong><p>Fetching the latest reports...</p></div></div>
+  <div class="error-panel" *ngIf="errorMessage"><div><strong>We couldn't load your reports</strong><p>{{ errorMessage }}</p></div><button type="button" (click)="loadDashboard()">Try again</button></div>
+
+  <ng-container *ngIf="!loading && !errorMessage">
+    <section class="stats-grid" aria-label="Dashboard statistics">
+      <button type="button" class="stat-card" *ngFor="let stat of visibleStats" [class]="'stat-card tone-' + stat.tone" (click)="selectStat(stat)">
+        <span class="stat-icon">{{ stat.icon }}</span><span class="stat-label">{{ stat.title }}</span><span class="card-arrow">›</span>
+        <strong class="stat-value">{{ stat.value | number:'1.0-2' }}<small *ngIf="stat.title === 'Average Rating'"> / 5</small></strong><span class="stat-description">{{ stat.description }}</span>
+      </button>
+    </section>
+
+    <section class="reports-section">
+      <div class="section-heading"><div class="section-title-icon">▥</div><div><h2>Detailed Reports</h2><p>Dive deeper into the data with detailed breakdowns</p></div><div class="heading-dots"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="report-grid" *ngIf="activeView === 'all' || activeView === 'assets'">
+        <article class="report-card"><div class="report-heading"><span class="report-icon blue-icon">▰</span><h3>Assets by Status</h3><button type="button" (click)="setView('assets')">View All →</button></div>
+          <ng-container *ngIf="filteredAssetsByStatus.length; else noAssetStatus"><div class="chart-row" *ngFor="let item of filteredAssetsByStatus; trackBy: trackByLabel"><div class="chart-label"><span class="bullet blue-bullet"></span><span class="label-text">{{ item.label }}</span><strong>{{ item.count }}</strong><div class="progress-track"><div class="progress-fill status-fill" [style.width.%]="getBarWidth(item, assetsByStatus)"></div></div><small>{{ getBarPercent(item, assetsByStatus) }}%</small></div></div></ng-container>
+          <ng-template #noAssetStatus><p class="empty-state">No matching asset status records.</p></ng-template>
+        </article>
+        <article class="report-card"><div class="report-heading"><span class="report-icon violet-icon">⬡</span><h3>Assets by Type</h3><button type="button" (click)="setView('assets')">View All →</button></div>
+          <ng-container *ngIf="filteredAssetsByType.length; else noAssetType"><div class="chart-row" *ngFor="let item of filteredAssetsByType; trackBy: trackByLabel"><div class="chart-label"><span class="bullet violet-bullet"></span><span class="label-text">{{ item.label }}</span><strong>{{ item.count }}</strong><div class="progress-track"><div class="progress-fill type-fill" [style.width.%]="getBarWidth(item, assetsByType)"></div></div><small>{{ getBarPercent(item, assetsByType) }}%</small></div></div></ng-container>
+          <ng-template #noAssetType><p class="empty-state">No matching asset type records.</p></ng-template>
+        </article>
+      </div>
+      <div class="report-grid" *ngIf="activeView === 'all' || activeView === 'feedback'">
+        <article class="report-card"><div class="report-heading"><span class="report-icon amber-icon">★</span><h3>Feedback by Rating</h3><button type="button" (click)="setView('feedback')">View All →</button></div>
+          <ng-container *ngIf="filteredFeedbackByRating.length; else noRatings"><div class="chart-row" *ngFor="let item of filteredFeedbackByRating; trackBy: trackByLabel"><div class="chart-label"><span class="bullet amber-bullet"></span><span class="label-text">{{ item.label }}</span><strong>{{ item.count }}</strong><div class="progress-track"><div class="progress-fill rating-fill" [style.width.%]="getBarWidth(item, feedbackByRating)"></div></div><small>{{ getBarPercent(item, feedbackByRating) }}%</small></div></div></ng-container>
+          <ng-template #noRatings><p class="empty-state">Feedback ratings will appear here when submitted.</p></ng-template>
+        </article>
+        <article class="report-card"><div class="report-heading"><span class="report-icon green-icon">●</span><h3>Feedback by Status</h3><button type="button" (click)="setView('feedback')">View All →</button></div>
+          <ng-container *ngIf="filteredFeedbackByStatus.length; else noFeedbackStatus"><div class="chart-row" *ngFor="let item of filteredFeedbackByStatus; trackBy: trackByLabel"><div class="chart-label"><span class="bullet green-bullet"></span><span class="label-text">{{ item.label }}</span><strong>{{ item.count }}</strong><div class="progress-track"><div class="progress-fill feedback-fill" [style.width.%]="getBarWidth(item, feedbackByStatus)"></div></div><small>{{ getBarPercent(item, feedbackByStatus) }}%</small></div></div></ng-container>
+          <ng-template #noFeedbackStatus><p class="empty-state">No matching feedback status records.</p></ng-template>
+        </article>
+      </div>
+      <div class="no-search-results" *ngIf="searchTerm && !filteredAssetsByStatus.length && !filteredAssetsByType.length && !filteredFeedbackByRating.length && !filteredFeedbackByStatus.length"><strong>No matching reports</strong><p>Try another search term.</p><button type="button" (click)="clearFilters()">Clear filters</button></div>
+    </section>
+    <footer class="dashboard-footer"><span class="footer-mark">◆</span><div><strong>Employee Service Desk</strong><p>Your workspace for assets and employee feedback.</p></div><span class="footer-status"><i></i> API connected</span></footer>
+  </ng-container>
+</div>
