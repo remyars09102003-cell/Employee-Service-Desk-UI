@@ -1,0 +1,136 @@
+```html
+<div class="register-page">
+
+  <div class="register-card">
+
+    <div class="register-header">
+      <h1>Create your account</h1>
+      <p>Employee Service Desk Management System</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="userName">Full name</label>
+
+        <input
+          id="userName"
+          name="userName"
+          type="text"
+          [(ngModel)]="userName"
+          placeholder="Enter your full name"
+          autocomplete="name"
+          required
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email address</label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email address"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          autocomplete="new-password"
+          minlength="8"
+          required
+        />
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm password</label>
+
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          placeholder="Confirm your password"
+          autocomplete="new-password"
+          minlength="8"
+          required
+        />
+      </div>
+
+      <!-- Account Role -->
+      <div class="form-group">
+        <label for="role">Account role</label>
+
+        <select
+          id="role"
+          name="role"
+          [(ngModel)]="role"
+          required
+        >
+          <option
+            *ngFor="let roleItem of roles"
+            [ngValue]="roleItem.value"
+          >
+            {{ roleItem.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Error Message -->
+      <div
+        class="error-message"
+        *ngIf="errorMessage"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <!-- Success Message -->
+      <div
+        class="success-message"
+        *ngIf="successMessage"
+      >
+        {{ successMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="register-button"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">
+          Create account
+        </span>
+
+        <span *ngIf="loading">
+          Creating account...
+        </span>
+      </button>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        Already registered?
+        <a routerLink="/login">Sign in</a>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+```

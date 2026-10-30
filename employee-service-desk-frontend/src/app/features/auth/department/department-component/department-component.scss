@@ -1,0 +1,476 @@
+/* =========================================
+Department Management Page
+========================================= */
+
+:host {
+display: block;
+min-height: 100%;
+background-color: #f5f7fb;
+color: #263248;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+.container-fluid {
+max-width: 1600px;
+margin: 0 auto;
+padding-left: 24px;
+padding-right: 24px;
+}
+
+/* =========================================
+Page Header
+========================================= */
+
+h2.fw-bold {
+color: #1e293b;
+font-size: 1.8rem;
+letter-spacing: -0.5px;
+}
+
+h5.fw-bold {
+color: #263248;
+}
+
+.text-muted {
+color: #718096 !important;
+}
+
+.page-header {
+margin-bottom: 28px;
+}
+
+/* =========================================
+Buttons
+========================================= */
+
+.btn {
+border-radius: 8px;
+font-weight: 600;
+padding: 10px 16px;
+transition:
+background-color 0.2s ease,
+border-color 0.2s ease,
+box-shadow 0.2s ease,
+transform 0.2s ease;
+}
+
+.btn-primary {
+background-color: #3659d9;
+border-color: #3659d9;
+color: #ffffff;
+}
+
+.btn-primary:hover {
+background-color: #2948bd;
+border-color: #2948bd;
+box-shadow: 0 4px 12px rgba(54, 89, 217, 0.22);
+transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+background-color: #94a3d9;
+border-color: #94a3d9;
+cursor: not-allowed;
+transform: none;
+box-shadow: none;
+}
+
+.btn-outline-primary {
+color: #3659d9;
+border-color: #3659d9;
+}
+
+.btn-outline-primary:hover {
+background-color: #3659d9;
+border-color: #3659d9;
+color: #ffffff;
+}
+
+.btn-outline-danger:hover {
+box-shadow: 0 3px 10px rgba(220, 53, 69, 0.15);
+}
+
+.btn-outline-secondary {
+color: #64748b;
+border-color: #cbd5e1;
+}
+
+.btn-outline-secondary:hover {
+background-color: #64748b;
+border-color: #64748b;
+color: #ffffff;
+}
+
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+outline: 2px solid #93aafc;
+outline-offset: 2px;
+}
+
+/* =========================================
+Summary Cards
+========================================= */
+
+.card {
+border-radius: 14px;
+overflow: hidden;
+}
+
+.shadow-sm {
+box-shadow: 0 4px 18px rgba(15, 23, 42, 0.045) !important;
+}
+
+.row.g-3.mb-4 > .col-12 > .card {
+transition:
+transform 0.2s ease,
+box-shadow 0.2s ease;
+}
+
+.row.g-3.mb-4 > .col-12 > .card:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+.card-body {
+padding: 24px;
+}
+
+.card-body h3 {
+color: #1e293b;
+font-size: 1.9rem;
+}
+
+.rounded-circle {
+flex-shrink: 0;
+}
+
+/* Summary icon backgrounds */
+
+.bg-primary-subtle {
+background-color: #e8edff !important;
+}
+
+.text-primary {
+color: #3659d9 !important;
+}
+
+.bg-success-subtle {
+background-color: #dcfce7 !important;
+}
+
+.text-success {
+color: #15803d !important;
+}
+
+/* =========================================
+Alerts
+========================================= */
+
+.alert {
+border: none;
+border-radius: 10px;
+padding: 15px 18px;
+margin-bottom: 20px;
+}
+
+.alert-success {
+background-color: #dcfce7;
+color: #166534;
+}
+
+.alert-danger {
+background-color: #fee2e2;
+color: #991b1b;
+}
+
+.alert .btn-close {
+padding: 18px;
+}
+
+/* =========================================
+Add / Edit Department Form
+========================================= */
+
+.card-header {
+border-bottom: 1px solid #edf0f5;
+padding: 18px 22px;
+}
+
+.card-header.bg-white {
+background-color: #ffffff !important;
+}
+
+.card-body form {
+width: 100%;
+}
+
+.form-label {
+display: block;
+color: #334155;
+font-size: 0.92rem;
+font-weight: 600;
+margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+min-height: 44px;
+border: 1px solid #dce2ec;
+border-radius: 8px;
+background-color: #ffffff;
+color: #263248;
+font-size: 0.94rem;
+padding: 10px 13px;
+transition:
+border-color 0.2s ease,
+box-shadow 0.2s ease;
+}
+
+.form-control::placeholder {
+color: #a0aabb;
+}
+
+.form-control:focus,
+.form-select:focus {
+border-color: #7893f5;
+box-shadow: 0 0 0 3px rgba(54, 89, 217, 0.1);
+outline: none;
+}
+
+textarea.form-control {
+min-height: 100px;
+resize: vertical;
+}
+
+.text-danger {
+color: #dc3545 !important;
+}
+
+/* =========================================
+Department List and Search
+========================================= */
+
+.input-group {
+border-radius: 8px;
+}
+
+.input-group .input-group-text {
+border-color: #dce2ec;
+border-radius: 8px 0 0 8px;
+color: #718096;
+padding-left: 14px;
+padding-right: 14px;
+}
+
+.input-group .form-control {
+border-radius: 0 8px 8px 0;
+}
+
+.input-group:focus-within .input-group-text {
+border-color: #7893f5;
+}
+
+/* =========================================
+Department Table
+========================================= */
+
+.table-responsive {
+width: 100%;
+}
+
+.table {
+margin-bottom: 0;
+color: #334155;
+vertical-align: middle;
+}
+
+.table thead th {
+background-color: #f8fafc;
+border-bottom: 1px solid #e5eaf2;
+color: #64748b;
+font-size: 0.78rem;
+font-weight: 700;
+letter-spacing: 0.5px;
+padding-top: 16px;
+padding-bottom: 16px;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.table tbody td {
+border-bottom: 1px solid #edf0f5;
+font-size: 0.9rem;
+padding-top: 16px;
+padding-bottom: 16px;
+}
+
+.table-hover > tbody > tr:hover > * {
+background-color: #f8faff;
+}
+
+.table tbody tr:last-child td {
+border-bottom: none;
+}
+
+.table .fw-semibold {
+color: #263248;
+}
+
+.table .rounded-circle {
+display: inline-flex;
+width: 38px;
+height: 38px;
+align-items: center;
+justify-content: center;
+}
+
+/* =========================================
+Department Status Badges
+========================================= */
+
+.badge {
+display: inline-block;
+border-radius: 20px;
+font-size: 0.76rem;
+font-weight: 600;
+padding: 7px 12px;
+}
+
+.text-bg-success {
+background-color: #dcfce7 !important;
+color: #166534 !important;
+}
+
+.text-bg-secondary {
+background-color: #e9edf3 !important;
+color: #64748b !important;
+}
+
+/* =========================================
+Table Action Buttons
+========================================= */
+
+.table .btn-sm {
+width: 34px;
+height: 34px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 0;
+border-radius: 7px;
+}
+
+.table .btn-sm i {
+font-size: 0.95rem;
+}
+
+/* =========================================
+Loading Indicator
+========================================= */
+
+.spinner-border {
+width: 2.5rem;
+height: 2.5rem;
+}
+
+.text-center.py-5 {
+padding-top: 45px !important;
+padding-bottom: 45px !important;
+}
+
+/* =========================================
+Empty State
+========================================= */
+
+.table tbody tr td.text-center h6 {
+color: #334155;
+font-size: 1rem;
+font-weight: 700;
+}
+
+.table tbody tr td.text-center p {
+font-size: 0.9rem;
+}
+
+/* =========================================
+Card Footer
+========================================= */
+
+.card-footer {
+border-top: 1px solid #edf0f5;
+padding: 15px 22px;
+}
+
+/* =========================================
+Bootstrap Icons
+========================================= */
+
+.bi {
+vertical-align: middle;
+}
+
+/* =========================================
+Responsive Design
+========================================= */
+
+@media (max-width: 767.98px) {
+.container-fluid {
+padding-left: 14px;
+padding-right: 14px;
+}
+
+h2.fw-bold {
+font-size: 1.45rem;
+}
+
+.card-body {
+padding: 18px;
+}
+
+.card-header {
+padding: 16px;
+}
+
+.table thead th,
+.table tbody td {
+padding-left: 12px;
+padding-right: 12px;
+}
+
+.table thead th {
+font-size: 0.72rem;
+}
+
+.table tbody td {
+font-size: 0.84rem;
+}
+
+.table .btn-sm {
+width: 32px;
+height: 32px;
+}
+}
+
+@media (max-width: 480px) {
+.container-fluid {
+padding-left: 10px;
+padding-right: 10px;
+}
+
+h2.fw-bold {
+font-size: 1.3rem;
+}
+
+.btn {
+font-size: 0.85rem;
+}
+
+.card-body h3 {
+font-size: 1.6rem;
+}
+
+.row.g-3.mb-4 > .col-12 > .card .card-body {
+padding: 16px;
+}
+}

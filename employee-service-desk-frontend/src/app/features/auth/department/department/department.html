@@ -1,0 +1,88 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">ORGANIZATION</p>
+      <h1>Departments</h1>
+      <p class="muted">Manage departments and their organization details.</p>
+    </div>
+
+    <button class="primary-button" (click)="openCreateForm()">
+      + Add department
+    </button>
+  </header>
+
+  <div class="toolbar">
+    <input
+      type="search"
+      placeholder="Search departments"
+      [(ngModel)]="searchText"
+      (ngModelChange)="filterDepartments()"
+    />
+    <span>{{ filteredDepartments.length }} departments</span>
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+  <div class="department-grid">
+    <article class="department-card" *ngFor="let department of filteredDepartments">
+      <div class="card-top">
+        <span class="department-icon">D</span>
+        <span class="badge" [class.inactive]="!department.isActive">
+          {{ department.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+
+      <h2>{{ department.name }}</h2>
+      <p class="muted">{{ department.description || 'No description provided.' }}</p>
+
+      <div class="details">
+        <p><strong>Department ID:</strong> {{ department.id }}</p>
+        <p><strong>Manager ID:</strong> {{ department.managerId ?? 'Not assigned' }}</p>
+        <p><strong>Location ID:</strong> {{ department.locationId ?? 'Not assigned' }}</p>
+      </div>
+
+      <div class="card-actions">
+        <button class="text-button" (click)="openEditForm(department)">Edit</button>
+        <button
+          class="text-button danger"
+          *ngIf="department.isActive"
+          (click)="deactivateDepartment(department)"
+        >
+          Deactivate
+        </button>
+      </div>
+    </article>
+
+    <p *ngIf="filteredDepartments.length === 0 && !loading">
+      No departments found.
+    </p>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showForm">
+    <form class="form-card" (ngSubmit)="saveDepartment()">
+      <h2>{{ editingId === null ? 'Add department' : 'Edit department' }}</h2>
+
+      <label>Department name *</label>
+      <input name="name" [(ngModel)]="form.name" required />
+
+      <label>Description</label>
+      <textarea name="description" [(ngModel)]="form.description" rows="3"></textarea>
+
+      <label>Manager ID</label>
+      <input type="number" name="managerId" [(ngModel)]="form.managerId" />
+
+      <label>Location ID</label>
+      <input type="number" name="locationId" [(ngModel)]="form.locationId" />
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="cancelForm()">
+          Cancel
+        </button>
+        <button type="submit" class="primary-button">Save department</button>
+      </div>
+    </form>
+  </div>
+</section>

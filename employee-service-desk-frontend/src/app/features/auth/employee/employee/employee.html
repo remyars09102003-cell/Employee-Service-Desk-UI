@@ -1,0 +1,339 @@
+<section class="page">
+
+  <!-- Page Header -->
+
+  <header class="page-header">
+
+
+<div>
+  <p class="eyebrow">IDENTITY &amp; ORGANIZATION</p>
+
+  <h1>Employee Management</h1>
+
+  <p class="muted">
+    Manage employee profiles and organization details.
+  </p>
+</div>
+
+<button
+  type="button"
+  class="primary-button"
+  (click)="openCreateForm()">
+  + Add employee
+</button>
+
+
+  </header>
+
+  <!-- Search Toolbar -->
+
+  <div class="toolbar">
+
+
+<input
+  type="search"
+  placeholder="Search by name, email or employee ID"
+  [(ngModel)]="searchText"
+  (ngModelChange)="filterEmployees()">
+
+<span>
+  {{ filteredEmployees.length }} employees
+</span>
+
+
+  </div>
+
+  <!-- Notifications -->
+
+  <p
+    class="message error"
+    *ngIf="errorMessage && !showForm">
+    {{ errorMessage }}
+  </p>
+
+  <p
+    class="message success"
+    *ngIf="successMessage">
+    {{ successMessage }}
+  </p>
+
+  <!-- Employee Table -->
+
+  <div class="card table-wrapper">
+
+
+<p *ngIf="loading">
+  Loading employees...
+</p>
+
+<table *ngIf="!loading">
+
+  <thead>
+    <tr>
+      <th>Employee ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Designation</th>
+      <th>Department</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <tr *ngFor="let employee of filteredEmployees">
+
+      <td>{{ employee.employeeId }}</td>
+
+      <td>
+        {{ employee.firstName }} {{ employee.lastName }}
+      </td>
+
+      <td>{{ employee.email }}</td>
+
+      <td>
+        {{ employee.designation || '—' }}
+      </td>
+
+      <td>
+        {{ employee.departmentName || employee.departmentId }}
+      </td>
+
+      <td>
+        <span
+          class="badge"
+          [class.inactive]="!employee.isActive">
+
+          {{ employee.isActive
+            ? employee.employmentStatus
+            : 'Inactive' }}
+
+        </span>
+      </td>
+
+      <td class="actions">
+
+        <button
+          type="button"
+          class="text-button"
+          (click)="openEditForm(employee)">
+          Edit
+        </button>
+
+        <button
+          type="button"
+          class="text-button danger"
+          *ngIf="employee.isActive"
+          (click)="deactivateEmployee(employee)">
+          Deactivate
+        </button>
+
+      </td>
+
+    </tr>
+
+    <tr *ngIf="filteredEmployees.length === 0 && !loading">
+      <td colspan="7" class="empty">
+        No employees found.
+      </td>
+    </tr>
+
+  </tbody>
+
+</table>
+
+
+  </div>
+
+  <!-- Add/Edit Employee Modal -->
+
+  <div
+    class="modal-backdrop"
+    *ngIf="showForm"
+    (click)="cancelForm()">
+
+
+<form
+  class="form-card"
+  #employeeForm="ngForm"
+  (ngSubmit)="saveEmployee()"
+  (click)="$event.stopPropagation()"
+  novalidate>
+
+  <h2>
+    {{ editingId === null ? 'Add employee' : 'Edit employee' }}
+  </h2>
+
+
+  <!-- Employee ID -->
+  <label for="employeeId">Employee ID *</label>
+
+  <input
+    id="employeeId"
+    type="text"
+    name="employeeId"
+    [(ngModel)]="form.employeeId"
+    placeholder="Enter employee ID"
+    required>
+
+
+  <!-- First Name -->
+  <label for="firstName">First name *</label>
+
+  <input
+    id="firstName"
+    type="text"
+    name="firstName"
+    [(ngModel)]="form.firstName"
+    placeholder="Enter first name"
+    required>
+
+
+  <!-- Last Name -->
+  <label for="lastName">Last name *</label>
+
+  <input
+    id="lastName"
+    type="text"
+    name="lastName"
+    [(ngModel)]="form.lastName"
+    placeholder="Enter last name"
+    required>
+
+
+  <!-- Email -->
+  <label for="email">Email *</label>
+
+  <input
+    id="email"
+    type="email"
+    name="email"
+    [(ngModel)]="form.email"
+    placeholder="Enter email address"
+    required
+    email>
+
+
+  <!-- Phone -->
+  <label for="phone">Phone</label>
+
+  <input
+    id="phone"
+    type="tel"
+    name="phone"
+    [(ngModel)]="form.phone"
+    placeholder="Enter phone number">
+
+
+  <!-- Designation -->
+  <label for="designation">Designation</label>
+
+  <input
+    id="designation"
+    type="text"
+    name="designation"
+    [(ngModel)]="form.designation"
+    placeholder="Enter designation">
+
+
+  <!-- Joining Date -->
+  <label for="joiningDate">Joining date *</label>
+
+  <input
+    id="joiningDate"
+    type="date"
+    name="joiningDate"
+    [(ngModel)]="form.joiningDate"
+    required>
+
+
+  <!-- Department ID -->
+  <label for="departmentId">Department ID *</label>
+
+  <input
+    id="departmentId"
+    type="number"
+    name="departmentId"
+    [(ngModel)]="form.departmentId"
+    placeholder="Enter existing department ID"
+    min="1"
+    step="1"
+    required>
+
+  <small class="field-hint">
+    Enter a Department ID that exists in your database.
+  </small>
+
+
+  <!-- Manager ID -->
+  <label for="managerId">Manager ID</label>
+
+  <input
+    id="managerId"
+    type="number"
+    name="managerId"
+    [(ngModel)]="form.managerId"
+    placeholder="Enter manager ID (optional)"
+    min="1"
+    step="1">
+
+
+  <!-- Employment Status -->
+  <label for="employmentStatus">
+    Employment status
+  </label>
+
+  <select
+    id="employmentStatus"
+    name="employmentStatus"
+    [(ngModel)]="form.employmentStatus">
+
+    <option value="Active">Active</option>
+    <option value="Inactive">Inactive</option>
+    <option value="Resigned">Resigned</option>
+    <option value="Terminated">Terminated</option>
+
+  </select>
+
+
+  <!-- Error Message -->
+  <p
+    class="message error"
+    *ngIf="errorMessage">
+    {{ errorMessage }}
+  </p>
+
+
+  <!-- Form Actions -->
+  <div class="form-actions">
+
+    <button
+      type="button"
+      class="secondary-button"
+      (click)="cancelForm()"
+      [disabled]="saving">
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      class="primary-button"
+      [disabled]="saving || employeeForm.invalid">
+
+      {{ saving
+        ? 'Saving...'
+        : editingId === null
+          ? 'Save employee'
+          : 'Update employee' }}
+
+    </button>
+
+  </div>
+
+</form>
+
+
+  </div>
+
+</section>

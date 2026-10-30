@@ -1,0 +1,107 @@
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light py-4">
+
+  <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5"
+       style="width: 100%; max-width: 650px;">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-5">
+
+      <div class="rounded-4 bg-primary text-white d-flex
+                  align-items-center justify-content-center fw-bold"
+           style="width: 70px; height: 70px; font-size: 22px;">
+        ES
+      </div>
+
+      <div>
+        <h3 class="fw-bold mb-1">Employee Service Desk</h3>
+        <p class="text-secondary mb-0">Account verification</p>
+      </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="mb-4">
+      <div class="rounded-4 bg-light d-flex align-items-center
+                  justify-content-center mb-4"
+           style="width: 80px; height: 80px; font-size: 35px;">
+        📩
+      </div>
+
+      <p class="text-primary fw-semibold">ACCOUNT RECOVERY</p>
+
+      <h2 class="fw-bold mb-3">Verify your OTP</h2>
+
+      <p class="text-secondary">
+        Enter the six-digit verification code sent to your email address.
+      </p>
+
+      <p class="fw-semibold text-break">{{ email }}</p>
+    </div>
+
+    <!-- OTP Form -->
+    <form #otpForm="ngForm" (ngSubmit)="verifyOtp()">
+
+      <div class="mb-4">
+
+        <label for="otp" class="form-label fw-semibold">
+          One-time password (OTP)
+        </label>
+
+        <input
+          id="otp"
+          name="otp"
+          type="text"
+          class="form-control form-control-lg text-center"
+          placeholder="Enter 6-digit OTP"
+          [(ngModel)]="otp"
+          #otpInput="ngModel"
+          maxlength="6"
+          inputmode="numeric"
+          pattern="[0-9]{6}"
+          autocomplete="one-time-code"
+          required
+        />
+
+        <div class="text-danger small mt-2"
+             *ngIf="otpInput.invalid && otpInput.touched">
+          Please enter a valid six-digit OTP.
+        </div>
+
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-lg w-100 fw-semibold"
+        [disabled]="loading">
+
+        {{ loading ? 'Verifying...' : 'Verify OTP' }}
+
+      </button>
+
+    </form>
+
+    <div class="text-center mt-4">
+      <a routerLink="/forgot-password"
+         class="text-primary fw-semibold text-decoration-none">
+        Request another code
+      </a>
+    </div>
+
+    <div class="text-center mt-3">
+      <a routerLink="/login"
+         class="text-primary text-decoration-none">
+        ← Back to sign in
+      </a>
+    </div>
+
+  </div>
+
+</div>
